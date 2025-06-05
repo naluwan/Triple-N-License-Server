@@ -15,7 +15,7 @@ const useAuthStore = create<AuthState>((set) => {
     setToken: (token) => set({ token }),
     setUser: (user) => set({ user }),
     logout: () => {
-      localStorage.removeItem('TRIPLE_N_ERP_JWT_TOKEN');
+      localStorage.removeItem('access_token');
       localStorage.setItem('logoutMsg', '登出成功');
       set({ token: null, user: null });
       window.location.href = '/login';

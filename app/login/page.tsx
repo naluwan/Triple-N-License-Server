@@ -40,6 +40,7 @@ const LoginPage = () => {
       setToken(res.data.token);
       setUser(res.data.user);
       toast.success('登入成功');
+      localStorage.setItem('access_token', res.data.token);
       router.push('/dashboard');
     } else {
       toast.error(res.data.message);
