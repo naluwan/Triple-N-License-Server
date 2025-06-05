@@ -116,7 +116,7 @@ const DashboardPage = () => {
           open={open}
           setOpen={setOpen}
           isLoading={isLoading}
-          atSubmit={handleSubmit}
+          onSubmit={handleSubmit}
         />
       </div>
       <Card>

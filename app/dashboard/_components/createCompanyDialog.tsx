@@ -49,10 +49,10 @@ interface Props {
   open: boolean;
   setOpen: (open: boolean) => void;
   isLoading: boolean;
-  atSubmit: (data: FormValues) => void;
+  onSubmit: (data: FormValues) => void;
 }
 
-const CreateCompanyDialog = ({ open, setOpen, isLoading, atSubmit }: Props) => {
+const CreateCompanyDialog = ({ open, setOpen, isLoading, onSubmit }: Props) => {
   const {
     register,
     control,
@@ -243,7 +243,7 @@ const CreateCompanyDialog = ({ open, setOpen, isLoading, atSubmit }: Props) => {
         )}
 
         <DialogFooter className='gap-4 p-0'>
-          <Button type='submit' onClick={handleSubmit(atSubmit)}>
+          <Button type='submit' onClick={handleSubmit(onSubmit)}>
             註冊
           </Button>
           <DialogClose onClick={() => reset()}>
