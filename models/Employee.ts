@@ -9,7 +9,6 @@ export interface EmployeeType extends Document {
   phone: string;
   address: string;
   isLock: boolean;
-  dateEmployed: Date;
   updatedAt: Date;
   updatedBy: { _id: mongoose.Schema.Types.ObjectId; name: string };
 }
@@ -22,7 +21,6 @@ const EmployeeSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   address: { type: String, required: true },
   isLock: { type: Boolean, default: false },
-  dateEmployed: { type: Date, required: true },
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Employee' },
 });
 
