@@ -17,21 +17,9 @@ export async function POST(req: Request): Promise<NextResponse> {
     const user = await authenticateToken(token);
     if (!user) return NextResponse.json({ status: 403, message: 'Token已過期' });
 
-    const formData = await req.formData();
+    const { name, email, phone, address, id } = await req.json();
 
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const phone = formData.get('phone') as string;
-    const address = formData.get('address') as string;
-    const id = formData.get('id') as string;
-
-    if (
-      !name ||
-      !email ||
-      !phone ||
-      !address ||
-      !id 
-    ) {
+    if (!name || !email || !phone || !address || !id) {
       return NextResponse.json({ status: 400, message: '所有欄位都是必填的' });
     }
 

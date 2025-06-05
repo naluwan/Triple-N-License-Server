@@ -39,12 +39,24 @@ const LoginPage = () => {
     if (res.data.status === 200) {
       setToken(res.data.token);
       setUser(res.data.user);
+      toast.success('登入成功');
       router.push('/dashboard');
     } else {
-      console.log('[error]', 123123123);
       toast.error(res.data.message);
     }
   };
+
+  useEffect(() => {
+    const msg = localStorage.getItem('logoutMsg');
+    if (msg) {
+      if (msg === '登出成功') {
+        toast.success(msg);
+      } else {
+        toast.error(msg);
+      }
+      localStorage.removeItem('logoutMsg');
+    }
+  }, []);
 
   useEffect(() => {
     const savedToken = localStorage.getItem('access_token');
