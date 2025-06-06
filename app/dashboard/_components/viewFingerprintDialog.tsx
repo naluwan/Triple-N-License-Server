@@ -22,14 +22,9 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import useAuthStore from '@/store/authStore';
 import useCompanyStore from '@/store/companyStore';
+import { FingerprintType } from '@/models/Company';
 
-export type Fingerprint = {
-  value: string;
-  registeredAt: string;
-  licenseType: 'subscription' | 'lifetime';
-  expiryDate?: string | null;
-  status: 'active' | 'revoked';
-};
+export type Fingerprint = FingerprintType;
 
 const fingerprintSchema = z.object({
   value: z.string().min(1, '設備ID 必填'),
@@ -149,11 +144,11 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
           <DialogDescription>查看與管理此公司已註冊的設備</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-          {fields.map((field, index) => {
+          {fields.map((fieldItem, index) => {
             const currentLicenseType = watchFingerprints?.[index]?.licenseType;
             const fpStatus = watchFingerprints?.[index]?.status;
             return (
-              <div key={field.id} className='rounded-md border p-3 text-sm shadow-sm space-y-2'>
+              <div key={fieldItem.id} className='rounded-md border p-3 text-sm shadow-sm space-y-2'>
                 <Input {...register(`fingerprints.${index}.value`)} placeholder='設備ID' />
                 <Controller
                   control={control}
@@ -165,12 +160,12 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       className='flex gap-4'
                     >
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='subscription' id={`sub-${field.id}`} />
-                        <label htmlFor={`sub-${field.id}`}>訂閱制</label>
+                        <RadioGroupItem value='subscription' id={`sub-${fieldItem.id}`} />
+                        <label htmlFor={`sub-${fieldItem.id}`}>訂閱制</label>
                       </div>
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='lifetime' id={`life-${field.id}`} />
-                        <label htmlFor={`life-${field.id}`}>買斷制</label>
+                        <RadioGroupItem value='lifetime' id={`life-${fieldItem.id}`} />
+                        <label htmlFor={`life-${fieldItem.id}`}>買斷制</label>
                       </div>
                     </RadioGroup>
                   )}
@@ -183,9 +178,9 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       <DatePicker
                         defaultDate={field.value}
                         updateDate={field.onChange}
-                        openDatePicker={dateOpenMap[field.id] || false}
+                        openDatePicker={dateOpenMap[fieldItem.id] || false}
                         setOpenDatePicker={(open) =>
-                          setDateOpenMap((prev) => ({ ...prev, [field.id]: open }))
+                          setDateOpenMap((prev) => ({ ...prev, [fieldItem.id]: open }))
                         }
                       />
                     )}
@@ -204,7 +199,7 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                     size='sm'
                     variant='outline'
                     className='h-6 text-xs'
-                    onClick={() => toggleStatus(field.value, fpStatus)}
+                    onClick={() => toggleStatus(fieldItem.value, fpStatus)}
                   >
                     {fpStatus === 'active' ? '撤銷' : '啟用'}
                   </Button>

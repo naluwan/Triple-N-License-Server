@@ -6,12 +6,9 @@ import { ArrowUpDown, LockKeyhole, LockKeyholeOpen } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import ViewFingerprintDialog from './viewFingerprintDialog';
+import { FingerprintType } from '@/models/Company';
 
-export type Fingerprint = {
-  value: string;
-  registeredAt: string;
-  status: 'active' | 'revoked';
-};
+export type Fingerprint = FingerprintType;
 
 export type Company = {
   _id: string;

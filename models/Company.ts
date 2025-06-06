@@ -25,6 +25,20 @@ export interface CompanyType extends Document {
   updatedBy: { _id: mongoose.Schema.Types.ObjectId; name: string };
 }
 
+// 用來寫入資料時的公司類型
+export interface UpdateCompanyType {
+  name: string;
+  companyId: string;
+  email: string;
+  phone: string;
+  address: string;
+  deployKey: string;
+  active: boolean;
+  fingerprints: FingerprintType[];
+  updatedAt: Date;
+  updatedBy: mongoose.Types.ObjectId;
+}
+
 // 單一 fingerprint schema
 const FingerprintSchema = new mongoose.Schema<FingerprintType>({
   value: { type: String, required: true },

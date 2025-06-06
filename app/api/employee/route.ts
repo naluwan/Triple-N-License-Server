@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connect from '@/lib/mongodb';
 import Employee from '@/models/Employee';
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { authenticateToken } from '@/lib/authMiddleware';
 
@@ -38,7 +39,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       address,
       id,
       isLock: false,
-      updatedBy: user._id,
+      updatedBy: new mongoose.Types.ObjectId(
+        user._id,
+      ),
     });
 
     await newEmployee.save();
