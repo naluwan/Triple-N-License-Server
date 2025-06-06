@@ -4,12 +4,16 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import useAuthStore from '@/store/authStore';
 import useCompanyStore from '@/store/companyStore';
+import toast from 'react-hot-toast';
 
 const fetcher = (url: string, token: string) =>
-  axios.get(url, { headers: { Authorization: `Bearer ${token}` } }).then((res) => res.data);
+  axios
+    .get(url, { headers: { Authorization: `Bearer ${token}` } })
+    .then((res) => res.data);
 
 const useCompanies = () => {
-  const token = useAuthStore((state) => state.token);
+  const token =
+    useAuthStore((state) => state.token) || localStorage.getItem('access_token');
   const logout = useAuthStore((state) => state.logout);
   const setCompanies = useCompanyStore((state) => state.setCompanies);
 
@@ -30,9 +34,9 @@ const useCompanies = () => {
 
   useEffect(() => {
     if (error) {
-      logout('請重新登入');
+      toast.error(error?.response?.data.message);
     }
-  }, [error, logout]);
+  }, [error]);
 
   return { companies: data?.companies || [], mutate, isLoading };
 };

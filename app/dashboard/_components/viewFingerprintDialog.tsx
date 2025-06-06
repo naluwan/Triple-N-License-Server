@@ -54,7 +54,7 @@ const ViewFingerprintDialog = ({
       <DialogContent className='max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>授權設備列表</DialogTitle>
-          <DialogDescription>查看與管理此公司已註冊的 Fingerprint 裝置</DialogDescription>
+          <DialogDescription>查看與管理此公司已註冊的設備</DialogDescription>
         </DialogHeader>
         <div className='space-y-4'>
           {fingerprints.length === 0 ? (
@@ -63,10 +63,10 @@ const ViewFingerprintDialog = ({
             fingerprints.map((fp, idx) => (
               <div key={idx} className='rounded-md border p-3 text-sm shadow-sm'>
                 <p className='break-all font-mono text-xs'>
-                  <strong>Fingerprint：</strong> {fp.value}
+                  <strong>設備ID：</strong> {fp.value}
                 </p>
                 <p className='text-muted-foreground text-xs'>
-                  註冊時間：{new Date(fp.registeredAt).toLocaleString()}
+                  註冊時間：{new Date(fp.registeredAt).toLocaleDateString()}
                 </p>
                 <div className='flex items-center justify-between pt-1'>
                   <p

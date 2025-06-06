@@ -43,7 +43,7 @@ export const columns = (mutate?: () => void): ColumnDef<Company>[] => [
     cell: ({ row }) => {
       const company = row.original;
       return (
-        <Link href={`/employee/${company._id}`}>
+        <Link href={`/company/${company._id}`}>
           <p>{company.name}</p>
         </Link>
       );

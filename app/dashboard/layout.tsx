@@ -19,7 +19,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
         <Button
           variant='ghost'
           size='sm'
-          onClick={onLogout}
+          onClick={() => onLogout('登出成功')}
           className='flex items-center gap-2'
         >
           <LogOut className='h-4 w-4' />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import CreateCompanyDialog from './_components/createCompanyDialog';
 import axios from 'axios';
@@ -28,70 +28,22 @@ export interface NewCompanyType {
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
-  // const [newCompany, setNewCompany] = useState<NewCompanyType>({
-  //   name: '',
-  //   companyId: '',
-  //   email: '',
-  //   phone: '',
-  //   address: '',
-  //   deployKey: '',
-  //   fingerprints: [
-  //     {
-  //       id: uuidv4(),
-  //       value: '',
-  //       licenseType: 'lifetime',
-  //       expiryDate: new Date(),
-  //     },
-  //   ],
-  //   active: true,
-  // });
-
-  const token = useAuthStore((state) => state.token);
+  const authToken = useAuthStore((state) => state.token);
   const { companies, isLoading: companyLoading, mutate } = useCompanies();
 
-  // const updateNewCompany = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setNewCompany((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  // const updateFingerprints = (
-  //   newList: {
-  //     id: string;
-  //     value: string;
-  //     licenseType: 'subscription' | 'lifetime';
-  //     expiryDate?: Date;
-  //   }[],
-  // ) => {
-  //   setNewCompany((prev) => ({
-  //     ...prev,
-  //     fingerprints: newList,
-  //   }));
-  // };
-
-  // const resetCompany = () => {
-  //   setNewCompany({
-  //     name: '',
-  //     companyId: '',
-  //     email: '',
-  //     phone: '',
-  //     address: '',
-  //     deployKey: '',
-  //     fingerprints: [
-  //       {
-  //         id: uuidv4(),
-  //         value: '',
-  //         licenseType: 'lifetime',
-  //         expiryDate: new Date(),
-  //       },
-  //     ],
-  //     active: true,
-  //   });
-  // };
+  useEffect(() => {
+    const localToken = localStorage.getItem('access_token');
+    setToken(authToken || localToken);
+  }, [authToken]);
 
   const handleSubmit = async (data: NewCompanyType) => {
+    if (!token) {
+      toast.error('尚未登入');
+      return;
+    }
+
     setIsCreating(true);
     try {
       const res = await axios.post('/api/company', data, {

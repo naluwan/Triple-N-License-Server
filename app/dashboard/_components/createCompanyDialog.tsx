@@ -175,7 +175,12 @@ const CreateCompanyDialog = ({ open, setOpen, isLoading, onSubmit }: Props) => {
                         <Button
                           type='button'
                           variant='ghost'
-                          onClick={() => remove(index)}
+                          onClick={() => {
+                            if (fields.length > 1) {
+                              remove(index);
+                            }
+                          }}
+                          disabled={fields.length === 1}
                         >
                           移除
                         </Button>
