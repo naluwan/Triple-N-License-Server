@@ -1,6 +1,17 @@
 import { NextResponse } from 'next/server';
 import connect from '@/lib/mongodb';
-import Company from '@/models/Company';
+import Company, { FingerprintType } from '@/models/Company';
+
+interface CreateCompanyPayload {
+  name: string;
+  companyId: string;
+  email: string;
+  phone: string;
+  address: string;
+  deployKey: string;
+  fingerprints: FingerprintType[];
+}
+
 import { authenticateToken } from '@/lib/authMiddleware';
 
 export async function POST(req: Request): Promise<NextResponse> {
@@ -14,8 +25,15 @@ export async function POST(req: Request): Promise<NextResponse> {
     const user = await authenticateToken(token);
     if (!user) return NextResponse.json({ status: 403, message: 'Token已過期' });
 
-    const { name, companyId, email, phone, address, deployKey, fingerprints } =
-      await req.json();
+    const {
+      name,
+      companyId,
+      email,
+      phone,
+      address,
+      deployKey,
+      fingerprints,
+    } = (await req.json()) as CreateCompanyPayload;
 
     // 驗證必填欄位
     if (
@@ -108,3 +126,4 @@ export async function GET(req: Request): Promise<NextResponse> {
     );
   }
 }
+
