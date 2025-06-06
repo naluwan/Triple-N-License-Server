@@ -22,9 +22,14 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import useAuthStore from '@/store/authStore';
 import useCompanyStore from '@/store/companyStore';
-import { FingerprintType } from '@/models/Company';
 
-export type Fingerprint = FingerprintType;
+export type Fingerprint = {
+  value: string;
+  registeredAt: string;
+  licenseType: 'subscription' | 'lifetime';
+  expiryDate?: string | null;
+  status: 'active' | 'revoked';
+};
 
 const fingerprintSchema = z.object({
   value: z.string().min(1, '設備ID 必填'),
@@ -60,12 +65,7 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
     })),
   };
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    watch,
-  } = useForm<FormValues>({
+  const { register, control, handleSubmit, watch } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
@@ -117,7 +117,9 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
   const toggleStatus = async (value: string, currentStatus: 'active' | 'revoked') => {
     try {
       const res = await axios.put(`/api/company/${companyId}`, {
-        fingerprints: [{ value, status: currentStatus === 'active' ? 'revoked' : 'active' }],
+        fingerprints: [
+          { value, status: currentStatus === 'active' ? 'revoked' : 'active' },
+        ],
       });
       if (res.data.status === 200) {
         toast.success(res.data.message);
@@ -144,12 +146,18 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
           <DialogDescription>查看與管理此公司已註冊的設備</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
-          {fields.map((fieldItem, index) => {
+          {fields.map((field, index) => {
             const currentLicenseType = watchFingerprints?.[index]?.licenseType;
             const fpStatus = watchFingerprints?.[index]?.status;
             return (
-              <div key={fieldItem.id} className='rounded-md border p-3 text-sm shadow-sm space-y-2'>
-                <Input {...register(`fingerprints.${index}.value`)} placeholder='設備ID' />
+              <div
+                key={field.id}
+                className='space-y-2 rounded-md border p-3 text-sm shadow-sm'
+              >
+                <Input
+                  {...register(`fingerprints.${index}.value`)}
+                  placeholder='設備ID'
+                />
                 <Controller
                   control={control}
                   name={`fingerprints.${index}.licenseType`}
@@ -160,12 +168,12 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       className='flex gap-4'
                     >
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='subscription' id={`sub-${fieldItem.id}`} />
-                        <label htmlFor={`sub-${fieldItem.id}`}>訂閱制</label>
+                        <RadioGroupItem value='subscription' id={`sub-${field.value}`} />
+                        <label htmlFor={`sub-${field.value}`}>訂閱制</label>
                       </div>
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='lifetime' id={`life-${fieldItem.id}`} />
-                        <label htmlFor={`life-${fieldItem.id}`}>買斷制</label>
+                        <RadioGroupItem value='lifetime' id={`life-${field.value}`} />
+                        <label htmlFor={`life-${field.value}`}>買斷制</label>
                       </div>
                     </RadioGroup>
                   )}
@@ -178,9 +186,9 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       <DatePicker
                         defaultDate={field.value}
                         updateDate={field.onChange}
-                        openDatePicker={dateOpenMap[fieldItem.id] || false}
+                        openDatePicker={dateOpenMap[field.value] || false}
                         setOpenDatePicker={(open) =>
-                          setDateOpenMap((prev) => ({ ...prev, [fieldItem.id]: open }))
+                          setDateOpenMap((prev) => ({ ...prev, [field.value]: open }))
                         }
                       />
                     )}
@@ -192,14 +200,14 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       fpStatus === 'active' ? 'text-green-600' : 'text-red-500'
                     }`}
                   >
-                    狀態：{fpStatus === 'active' ? '啟用中' : '已撤銷'}
+                    狀態：{fpStatus === 'active' ? '啟用中' : '停用'}
                   </p>
                   <Button
                     type='button'
                     size='sm'
                     variant='outline'
                     className='h-6 text-xs'
-                    onClick={() => toggleStatus(fieldItem.value, fpStatus)}
+                    onClick={() => toggleStatus(field.value, fpStatus)}
                   >
                     {fpStatus === 'active' ? '撤銷' : '啟用'}
                   </Button>

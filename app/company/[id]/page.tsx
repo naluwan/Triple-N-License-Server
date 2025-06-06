@@ -82,11 +82,9 @@ const CompanyPage = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.put(
-        `/api/company/${params.id}`,
-        data,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await axios.put(`/api/company/${params.id}`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.data.status === 200) {
         toast.success(res.data.message);
         editCompany(res.data.company);
@@ -128,17 +126,54 @@ const CompanyPage = () => {
           <CardTitle>基本資料</CardTitle>
         </CardHeader>
         <CardContent className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-          <InputBlock id='name' label='公司名稱' register={register} error={errors.name} disabled={!editing} />
-          <InputBlock id='companyId' label='公司統編' register={register} error={errors.companyId} disabled={!editing} />
-          <InputBlock id='email' label='公司 Email' register={register} error={errors.email} disabled={!editing} />
-          <InputBlock id='phone' label='電話' register={register} error={errors.phone} disabled={!editing} />
-          <InputBlock id='deployKey' label='部署金鑰' register={register} error={errors.deployKey} disabled={!editing} />
+          <InputBlock
+            id='name'
+            label='公司名稱'
+            register={register}
+            error={errors.name}
+            disabled={!editing}
+          />
+          <InputBlock
+            id='companyId'
+            label='公司統編'
+            register={register}
+            error={errors.companyId}
+            disabled={!editing}
+          />
+          <InputBlock
+            id='email'
+            label='公司 Email'
+            register={register}
+            error={errors.email}
+            disabled={!editing}
+          />
+          <InputBlock
+            id='phone'
+            label='電話'
+            register={register}
+            error={errors.phone}
+            disabled={!editing}
+          />
+          <InputBlock
+            id='deployKey'
+            label='部署金鑰'
+            register={register}
+            error={errors.deployKey}
+            disabled={!editing}
+          />
           <div className='flex flex-col gap-1 md:col-span-2'>
             <Label htmlFor='address'>
               公司地址 <span className='text-red-500'>*</span>
             </Label>
-            <Textarea id='address' {...register('address')} className='resize-none' disabled={!editing} />
-            {errors.address && <p className='text-sm text-red-500'>{errors.address.message}</p>}
+            <Textarea
+              id='address'
+              {...register('address')}
+              className='resize-none'
+              disabled={!editing}
+            />
+            {errors.address && (
+              <p className='text-sm text-red-500'>{errors.address.message}</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -148,15 +183,28 @@ const CompanyPage = () => {
         </CardHeader>
         <CardContent className='space-y-2'>
           {fingerprints.length === 0 ? (
-            <p className='text-sm text-muted-foreground'>尚無授權設備</p>
+            <p className='text-muted-foreground text-sm'>尚無授權設備</p>
           ) : (
             fingerprints.map((fp, idx) => (
               <div key={idx} className='rounded-md border p-3 text-sm shadow-sm'>
                 <p className='break-all font-mono text-xs'>
                   <strong>設備ID：</strong> {fp.value}
                 </p>
-                <p className='text-xs'>授權：{fp.licenseType}</p>
-                {fp.expiryDate && <p className='text-xs'>到期日：{fp.expiryDate}</p>}
+                <p className='text-xs'>
+                  授權類型：{fp.licenseType === 'subscription' ? '訂閱制' : '買斷制'}
+                </p>
+                <p
+                  className={`text-xs font-medium ${
+                    fp.status === 'active' ? 'text-green-600' : 'text-red-500'
+                  }`}
+                >
+                  狀態：{fp.status === 'active' ? '啟用' : '停用'}
+                </p>
+                {fp.licenseType === 'subscription' && fp.expiryDate && (
+                  <p className='text-xs'>
+                    到期日：{new Date(fp.expiryDate).toLocaleDateString()}
+                  </p>
+                )}
                 <p className='text-muted-foreground text-xs'>
                   註冊時間：{new Date(fp.registeredAt).toLocaleDateString()}
                 </p>
