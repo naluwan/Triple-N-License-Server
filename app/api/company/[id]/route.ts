@@ -6,6 +6,7 @@ import Company, { FingerprintType, UpdateCompanyType } from '@/models/Company';
 type UpdateFingerprint = Omit<FingerprintType, 'registeredAt'>;
 import { authenticateToken } from '@/lib/authMiddleware';
 import { z } from 'zod';
+import Employee from '@/models/Employee';
 
 const fingerprintSchema = z.object({
   value: z.string().min(1),
@@ -42,7 +43,12 @@ export async function GET(
     const user = await authenticateToken(token);
     if (!user) return NextResponse.json({ status: 403, message: 'Token已過期' });
 
-    const company = await Company.findById(params.id);
+    const company = await Company.findById(params.id).populate({
+      path: 'updatedBy',
+      select: 'name',
+      model: Employee,
+    });
+
     if (!company) {
       return NextResponse.json({ status: 404, message: '公司不存在' });
     }
@@ -114,9 +120,7 @@ export async function PUT(
     }
 
     updateData.updatedAt = new Date();
-    updateData.updatedBy = new mongoose.Types.ObjectId(
-      user._id,
-    );
+    updateData.updatedBy = new mongoose.Types.ObjectId(user._id);
 
     const updatedCompany = await Company.findByIdAndUpdate(params.id, updateData, {
       new: true,

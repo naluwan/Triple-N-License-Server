@@ -163,17 +163,17 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                   name={`fingerprints.${index}.licenseType`}
                   render={({ field }) => (
                     <RadioGroup
-                      value={field.value}
+                      value={field.id}
                       onValueChange={field.onChange}
                       className='flex gap-4'
                     >
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='subscription' id={`sub-${field.value}`} />
-                        <label htmlFor={`sub-${field.value}`}>訂閱制</label>
+                        <RadioGroupItem value='subscription' id={`sub-${field.id}`} />
+                        <label htmlFor={`sub-${field.id}`}>訂閱制</label>
                       </div>
                       <div className='flex items-center space-x-2'>
-                        <RadioGroupItem value='lifetime' id={`life-${field.value}`} />
-                        <label htmlFor={`life-${field.value}`}>買斷制</label>
+                        <RadioGroupItem value='lifetime' id={`life-${field.id}`} />
+                        <label htmlFor={`life-${field.id}`}>買斷制</label>
                       </div>
                     </RadioGroup>
                   )}
@@ -186,9 +186,9 @@ const ViewFingerprintDialog = ({ companyId, fingerprints, mutate }: Props) => {
                       <DatePicker
                         defaultDate={field.value}
                         updateDate={field.onChange}
-                        openDatePicker={dateOpenMap[field.value] || false}
+                        openDatePicker={dateOpenMap[field.id] || false}
                         setOpenDatePicker={(open) =>
-                          setDateOpenMap((prev) => ({ ...prev, [field.value]: open }))
+                          setDateOpenMap((prev) => ({ ...prev, [field.id]: open }))
                         }
                       />
                     )}

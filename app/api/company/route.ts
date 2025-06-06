@@ -13,6 +13,7 @@ interface CreateCompanyPayload {
 }
 
 import { authenticateToken } from '@/lib/authMiddleware';
+import Employee from '@/models/Employee';
 
 export async function POST(req: Request): Promise<NextResponse> {
   try {
@@ -25,15 +26,8 @@ export async function POST(req: Request): Promise<NextResponse> {
     const user = await authenticateToken(token);
     if (!user) return NextResponse.json({ status: 403, message: 'Token已過期' });
 
-    const {
-      name,
-      companyId,
-      email,
-      phone,
-      address,
-      deployKey,
-      fingerprints,
-    } = (await req.json()) as CreateCompanyPayload;
+    const { name, companyId, email, phone, address, deployKey, fingerprints } =
+      (await req.json()) as CreateCompanyPayload;
 
     // 驗證必填欄位
     if (
@@ -109,7 +103,9 @@ export async function GET(req: Request): Promise<NextResponse> {
     const user = await authenticateToken(token);
     if (!user) return NextResponse.json({ status: 403, message: 'Token已過期' });
 
-    const companies = await Company.find().sort({ createdAt: -1 });
+    const companies = await Company.find()
+      .populate({ path: 'updatedBy', select: 'name', model: Employee })
+      .sort({ createdAt: -1 });
 
     return NextResponse.json({
       status: 200,
@@ -126,4 +122,3 @@ export async function GET(req: Request): Promise<NextResponse> {
     );
   }
 }
-

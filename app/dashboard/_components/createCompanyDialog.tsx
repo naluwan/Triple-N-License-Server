@@ -92,9 +92,7 @@ const CreateCompanyDialog = ({ open, setOpen, isLoading, onSubmit }: Props) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant='default' className='w-full sm:w-auto'>
-          註冊公司授權
-        </Button>
+        <Button variant='default'>註冊公司授權</Button>
       </DialogTrigger>
       <DialogContent
         className='hide-scrollbar max-h-[90%] max-w-[90%] overflow-y-scroll'
