@@ -5,7 +5,7 @@ interface AuthState {
   user: { email: string } | null;
   setToken: (token: string) => void;
   setUser: (user: { email: string }) => void;
-  logout: () => void;
+  logout: (msg?: string) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => {
@@ -14,9 +14,9 @@ const useAuthStore = create<AuthState>((set) => {
     user: null,
     setToken: (token) => set({ token }),
     setUser: (user) => set({ user }),
-    logout: () => {
+    logout: (msg = '登出成功') => {
       localStorage.removeItem('access_token');
-      localStorage.setItem('logoutMsg', '登出成功');
+      localStorage.setItem('logoutMsg', msg);
       set({ token: null, user: null });
       window.location.href = '/login';
     },
