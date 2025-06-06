@@ -13,7 +13,8 @@ const fetcher = (url: string, token: string) =>
 
 const useCompanies = () => {
   const token =
-    useAuthStore((state) => state.token) || localStorage.getItem('access_token');
+    useAuthStore((state) => state.token) ||
+    (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null);
   const logout = useAuthStore((state) => state.logout);
   const setCompanies = useCompanyStore((state) => state.setCompanies);
   const companies = useCompanyStore((state) => state.companies);
