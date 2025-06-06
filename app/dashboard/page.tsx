@@ -6,6 +6,9 @@ import CreateCompanyDialog from './_components/createCompanyDialog';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import useAuthStore from '@/store/authStore';
+import { DataTable } from '@/components/data-table/data-table';
+import { columns } from './_components/companyColumn';
+import useCompanies from '@/hooks/useCompanies';
 
 export interface NewCompanyType {
   name: string;
@@ -24,7 +27,7 @@ export interface NewCompanyType {
 
 const DashboardPage = () => {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   // const [newCompany, setNewCompany] = useState<NewCompanyType>({
   //   name: '',
@@ -45,6 +48,7 @@ const DashboardPage = () => {
   // });
 
   const token = useAuthStore((state) => state.token);
+  const { companies, isLoading: companyLoading, mutate } = useCompanies();
 
   // const updateNewCompany = (
   //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -88,7 +92,7 @@ const DashboardPage = () => {
   // };
 
   const handleSubmit = async (data: NewCompanyType) => {
-    setIsLoading(true);
+    setIsCreating(true);
     try {
       const res = await axios.post('/api/company', data, {
         headers: {
@@ -98,13 +102,14 @@ const DashboardPage = () => {
       if (res.data.status === 200) {
         toast.success(res.data.message);
         setOpen(false);
+        mutate();
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsCreating(false);
     }
   };
 
@@ -115,13 +120,17 @@ const DashboardPage = () => {
         <CreateCompanyDialog
           open={open}
           setOpen={setOpen}
-          isLoading={isLoading}
+          isLoading={isCreating}
           onSubmit={handleSubmit}
         />
       </div>
       <Card>
         <CardContent className='p-6'>
-          <div>這裡是 Data Table 的位置</div>
+          {companyLoading ? (
+            <p>載入中...</p>
+          ) : (
+            <DataTable data={companies} columns={columns(mutate)} page='0' />
+          )}
         </CardContent>
       </Card>
     </div>
