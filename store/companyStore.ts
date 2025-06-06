@@ -13,6 +13,7 @@ export interface Company {
   phone: string;
   createdAt: string;
   updatedAt: string;
+  updatedBy?: { _id: string; name: string };
 }
 
 interface CompanyState {

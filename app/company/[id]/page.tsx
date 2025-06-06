@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,8 @@ const CompanyPage = () => {
   const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fingerprints, setFingerprints] = useState<FingerprintType[]>([]);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState('');
+  const [lastUpdatedBy, setLastUpdatedBy] = useState('');
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -57,6 +59,8 @@ const CompanyPage = () => {
         if (res.data.status === 200) {
           const c = res.data.company;
           setFingerprints(c.fingerprints || []);
+          setLastUpdatedAt(c.updatedAt);
+          setLastUpdatedBy(c.updatedBy?.name || '');
           reset({
             name: c.name,
             companyId: c.companyId,
@@ -88,6 +92,8 @@ const CompanyPage = () => {
       if (res.data.status === 200) {
         toast.success(res.data.message);
         editCompany(res.data.company);
+        setLastUpdatedAt(res.data.company.updatedAt);
+        setLastUpdatedBy(res.data.company.updatedBy?.name || '');
         setEditing(false);
       } else {
         toast.error(res.data.message);
@@ -176,6 +182,13 @@ const CompanyPage = () => {
             )}
           </div>
         </CardContent>
+        <CardFooter className='flex justify-end'>
+          {lastUpdatedAt && (
+            <p className='text-xs text-muted-foreground'>
+              最後更新：{new Date(lastUpdatedAt).toLocaleString()} {lastUpdatedBy && `by ${lastUpdatedBy}`}
+            </p>
+          )}
+        </CardFooter>
       </Card>
       <Card>
         <CardHeader>
