@@ -29,6 +29,7 @@ const DashboardPage = () => {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const authToken = useAuthStore((state) => state.token);
   const { companies, isLoading: companyLoading, mutate } = useCompanies();
@@ -36,6 +37,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const localToken = localStorage.getItem('access_token');
     setToken(authToken || localToken);
+    setIsMounted(true);
   }, [authToken]);
 
   const handleSubmit = async (data: NewCompanyType) => {
@@ -64,6 +66,14 @@ const DashboardPage = () => {
       setIsCreating(false);
     }
   };
+
+  if (!isMounted || !token) {
+    return (
+      <div className='space-y-6'>
+        <p>載入中...</p>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6'>
