@@ -16,6 +16,7 @@ const useCompanies = () => {
     useAuthStore((state) => state.token) || localStorage.getItem('access_token');
   const logout = useAuthStore((state) => state.logout);
   const setCompanies = useCompanyStore((state) => state.setCompanies);
+  const companies = useCompanyStore((state) => state.companies);
 
   const { data, error, mutate, isLoading } = useSWR(
     token ? ['/api/company', token] : null,
@@ -38,7 +39,7 @@ const useCompanies = () => {
     }
   }, [error]);
 
-  return { companies: data?.companies || [], mutate, isLoading };
+  return { companies, mutate, isLoading };
 };
 
 export default useCompanies;
