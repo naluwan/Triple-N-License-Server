@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import connect from '@/lib/mongodb';
-import Company, { CompanyType, FingerprintType } from '@/models/Company';
+import mongoose from 'mongoose';
+import Company, { FingerprintType, UpdateCompanyType } from '@/models/Company';
+
+type UpdateFingerprint = Omit<FingerprintType, 'registeredAt'>;
 import { authenticateToken } from '@/lib/authMiddleware';
 import { z } from 'zod';
 
@@ -77,7 +80,9 @@ export async function PUT(
     const { name, companyId, email, phone, address, deployKey, fingerprints } =
       parseResult.data;
 
-    const updateData: Partial<CompanyType> = {};
+    const updateData: Partial<Omit<UpdateCompanyType, 'fingerprints'>> & {
+      fingerprints?: UpdateFingerprint[];
+    } = {};
     if (name) updateData.name = name;
     if (companyId) updateData.companyId = companyId;
     if (email) updateData.email = email;
@@ -100,7 +105,7 @@ export async function PUT(
           });
         }
       }
-      updateData.fingerprints = fingerprints.map((fp: FingerprintType) => ({
+      updateData.fingerprints = fingerprints.map((fp) => ({
         value: fp.value,
         licenseType: fp.licenseType || 'lifetime',
         expiryDate: fp.expiryDate || null,
@@ -109,7 +114,9 @@ export async function PUT(
     }
 
     updateData.updatedAt = new Date();
-    updateData.updatedBy = user._id;
+    updateData.updatedBy = new mongoose.Types.ObjectId(
+      user._id,
+    );
 
     const updatedCompany = await Company.findByIdAndUpdate(params.id, updateData, {
       new: true,

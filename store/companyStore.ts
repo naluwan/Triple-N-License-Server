@@ -1,10 +1,7 @@
 import { create } from 'zustand';
+import { FingerprintType } from '@/models/Company';
 
-export interface Fingerprint {
-  value: string;
-  registeredAt: string;
-  status: 'active' | 'revoked';
-}
+export type Fingerprint = FingerprintType;
 
 export interface Company {
   _id: string;
